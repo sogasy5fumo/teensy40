@@ -1,0 +1,20 @@
+#pragma once
+#include <Arduino.h>
+
+float normalizeAngle(float angle); // 角度を 0°~360° → -180°~180° に変換
+
+void serialStart(); // シリアル起動確認
+
+
+
+class MovingAverage
+{
+private:
+    static const int _num_elements = 10;      // サイズ定数(回数)
+    float _storage[_num_elements] = {0}; // バッファを0で初期化
+    int _current_target = 0;
+    int _count = 0;
+
+public:
+    float update(float now_val);
+};
