@@ -1,6 +1,6 @@
 #pragma once
-#include "FreeSansOblique18pt7b.h"
-#include "FreeSerifItalic12pt7b.h"
+#include <FreeSansOblique18pt7b.h>
+#include <FreeSerifItalic12pt7b.h>
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
