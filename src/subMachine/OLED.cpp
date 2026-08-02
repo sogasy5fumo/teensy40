@@ -1,16 +1,12 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-
-#include "Function/Display.h"
-#include "subMachine/OLED.h"
+#include "OLED.hpp"
 
 #define OLED_RESET -1
 #define SCREEN_ADDRESS 0x3C
 
 static int count = 1;
 static int click = 0;
+
+
 
 int menuNumberReset(int num)
 {
@@ -67,16 +63,21 @@ void mode_1st()
     }
     else
     {
-        // circle 1
-        display.drawCircle(34, 26, 18, 1);
-        // string 2
+        display.clearDisplay();
+        // string 1
         display.setTextColor(1);
         display.setTextWrap(false);
-        display.setCursor(23, 24);
-        display.print("Test");
-        // string 3
-        display.setCursor(69, 25);
-        display.print("IR");
+        display.setFont(&FreeSerifItalic12pt7b);
+        display.setCursor(3, 19);
+        display.print("IRval");
+        // circle 2
+        display.drawCircle(96, 31, 28, 1);
+        // paint 3
+        display.drawBitmap(96, 32, image_paint_3_bits, 1, 1, 1);
+        // string 4
+        display.setFont(&FreeSansOblique18pt7b);
+        display.setCursor(-4, 58);
+        display.print(ballAngle());
     }
 }
 
@@ -92,16 +93,22 @@ void mode_2nd()
     }
     else
     {
-        // circle 1
-        display.drawCircle(34, 26, 18, 1);
-        // string 2
-        display.setTextColor(1);
-        display.setTextWrap(false);
-        display.setCursor(23, 24);
-        display.print("Test");
-        // string 3
-        display.setCursor(69, 25);
-        display.print("Gyro");
+    display.clearDisplay();
+    // string 1
+    display.setTextColor(1);
+    display.setTextWrap(false);
+    display.setFont(&FreeSerifItalic12pt7b);
+    display.setCursor(3, 19);
+    display.print("IRval");
+    // circle 2
+    display.drawCircle(96, 31, 28, 1);
+    // paint 3
+    display.drawBitmap(96, 32, image_paint_3_bits, 1, 1, 1);
+    // string 4
+    display.setFont(&FreeSansOblique18pt7b);
+    display.setCursor(-4, 58);
+    display.print("Text");
+
     }
 }
 
