@@ -5,8 +5,8 @@
 static DSR1202 *_dsr = nullptr;
 
 static float _deg_position[4] = {0}; // モーターの物理的な配置角度
-static int _move_sign[4] = {1};      // 移動ベクトル計算後のパワーに対する符号
-static int _pd_sign[4] = {1};        // PD制御の回転トルクに対する符号
+static int _move_sign[4] = {1, 1, 1, 1};        // 移動ベクトル計算後のパワーに対する符号
+static int _pd_sign[4]   = {1, 1, 1, 1};        // PD制御の回転トルクに対する符号
 
 static PD *_pd = nullptr;
 static PD *_last_pd = nullptr;
@@ -35,10 +35,10 @@ bool motorsInit(HardwareSerial *serial, uint32_t baudrate)
 // 各モーターの移動方向の符号を設定 (1または-1)
 void motorsSetMoveSign(int sign_1ch, int sign_2ch, int sign_3ch, int sign_4ch)
 {
-    _move_sign[0] = sign_1ch / abs(sign_1ch);
-    _move_sign[1] = sign_2ch / abs(sign_2ch);
-    _move_sign[2] = sign_3ch / abs(sign_3ch);
-    _move_sign[3] = sign_4ch / abs(sign_4ch);
+    _move_sign[0] = (sign_1ch >= 0) ? 1 : -1;
+    _move_sign[1] = (sign_2ch >= 0) ? 1 : -1;
+    _move_sign[2] = (sign_3ch >= 0) ? 1 : -1;
+    _move_sign[3] = (sign_4ch >= 0) ? 1 : -1;
 }
 
 void motorsSetDegPosition(float deg_1ch, float deg_2ch, float deg_3ch, float deg_4ch)
@@ -51,10 +51,10 @@ void motorsSetDegPosition(float deg_1ch, float deg_2ch, float deg_3ch, float deg
 
 void motorsSetPdSign(int sign_1ch, int sign_2ch, int sign_3ch, int sign_4ch)
 {
-    _pd_sign[0] = sign_1ch / abs(sign_1ch);
-    _pd_sign[1] = sign_2ch / abs(sign_2ch);
-    _pd_sign[2] = sign_3ch / abs(sign_3ch);
-    _pd_sign[3] = sign_4ch / abs(sign_4ch);
+    _pd_sign[0] = (sign_1ch >= 0) ? 1 : -1;
+    _pd_sign[1] = (sign_2ch >= 0) ? 1 : -1;
+    _pd_sign[2] = (sign_3ch >= 0) ? 1 : -1;
+    _pd_sign[3] = (sign_4ch >= 0) ? 1 : -1;
 }
 
 // PD制御のみで機体回転させる
@@ -76,8 +76,8 @@ void motorsDirectMove(int value_1ch, int value_2ch, int value_3ch, int value_4ch
     _dsr->move(value_1ch, value_2ch, value_3ch, value_4ch);
 }
 
-#define PD_MAX 80.0f
-#define PD_MOVING_MAX 20.0f
+#define PD_MAX 60.0f
+#define PD_MOVING_MAX 35.0f
 
 void motorsMove(float deg, float power)
 {

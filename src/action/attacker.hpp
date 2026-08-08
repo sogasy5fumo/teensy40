@@ -14,4 +14,12 @@
 #include "line.hpp"
 #include "bno.hpp"
 
-void playAttacker(ATTACKER::Mode mode);
+#include "openmv.hpp"
+
+void attackerInit();
+
+void playAttacker(bool goal_toward);
+
+extern GYRO gyro;
+
+void motorTest();

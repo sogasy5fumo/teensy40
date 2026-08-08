@@ -1,6 +1,12 @@
 #pragma once
-#include <FreeSansOblique18pt7b.h>
-#include <FreeSerifItalic12pt7b.h>
+#include <Fonts/FreeMono12pt7b.h>
+#include <Fonts/FreeSansOblique18pt7b.h>
+#include <Fonts/FreeSerifItalic12pt7b.h>
+#include "Fonts/FreeMono9pt7b.h"
+#include "Fonts/FreeSerif9pt7b.h"
+
+static const unsigned char PROGMEM image_paint_3_bits[] = {0x80};
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -17,3 +23,6 @@
 // };
 
 extern void menuChoosen();
+
+bool modeChange();
+bool goalToward();

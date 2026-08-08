@@ -22,7 +22,8 @@ private:
     float _deadline = 0.0f;
 
     float _value = 0.0f;
-    float _old_value = 0.0f;
+    // float _old_value = 0.0f;
+    float _old_error = 0.0f;
     float _p_power = 0.0f;
     float _d_power = 0.0f;
     float _d_filtered = 0.0f;

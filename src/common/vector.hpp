@@ -11,7 +11,7 @@ public:
     // コンストラクタ
     Vector();
     Vector(float x0, float y0, float x1, float y1);
-    Vector(int deg, float length);
+    Vector(float deg, float length);
 
     // 演算
     Vector operator+(const Vector &other) const;

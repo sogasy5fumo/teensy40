@@ -10,7 +10,7 @@ Vector::Vector(float x0, float y0, float x1, float y1)
     _vector_x = x1 - x0;
     _vector_y = y1 - y0;
 }
-Vector::Vector(int deg, float length)
+Vector::Vector(float deg, float length)
 {
     float rad = radians(deg);
 

@@ -10,10 +10,10 @@
 class GYRO
 {
 private:
-    Adafruit_BNO055 *_bno;
-    float yaw = 0.0f;
+    Adafruit_BNO055 *_bno = nullptr;
+    float yaw;
 public:
-    bool init();
+    bool init(TwoWire *wire,uint8_t address);
     void update();
     float getYaw() { return yaw; }
 };

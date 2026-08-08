@@ -1,21 +1,22 @@
 #include "bno.hpp"
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 static float now_val = 0;
-const int DAC_PIN = A0;
+// const int DAC_PIN = A0;
 
-const int RESET_PIN = 1;
+const int RESET_PIN = 2;
 bool BNO_start = false;
 
-bool GYRO::init()
+bool GYRO::init(TwoWire *wire, uint8_t address)
 {
-    Serial.begin(115200);
     pinMode(RESET_PIN, INPUT_PULLDOWN);
 
+    wire->begin();
+
+    _bno = new Adafruit_BNO055(BNO055_ID, address, wire);
 
     Serial.print("BNO055 start   ");
 
-    if (!bno.begin())
+    if (!_bno->begin())
     {
     Serial.println("BNO not detected");
     BNO_start = false;
@@ -26,55 +27,76 @@ bool GYRO::init()
     delay(1000);
 
     BNO_start = true;
-    bno.setExtCrystalUse(true);
+    _bno->setExtCrystalUse(true);
     Serial.print("bno ready");
 
     analogWriteResolution(10); // 2^10=1024
+    return true;
 }
 
 void GYRO::update()
 {
-    imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+    // // Serial.println("update start");
 
-    float yaw   = euler.x();
+    // imu::Vector<3> euler = _bno->getVector(Adafruit_BNO055::VECTOR_EULER);
+    // // Serial.println("getVector done");
+
+    // yaw = euler.x();
+    // // Serial.println("yaw set");
+
+    // bool now_button = digitalRead(RESET_PIN);
+    // // Serial.println("button read done");
+
+    // static bool prevButton = LOW;
+
+    // if(prevButton == LOW && now_button == HIGH)
+    // {
+    //     Serial.println(" Reset ");
+    //     now_val = yaw;
+    // }
+    // Serial.print(" ");
+    // // Serial.println("before prevButton");
+    // prevButton = now_button;
+
+    // yaw = fmod((yaw - now_val + 360.0),360.0);
+
+    // static float smoothed_yaw = 0.0f;
+    // const float ALPHA = 0.2f;
+    // smoothed_yaw = yaw * ALPHA + smoothed_yaw * (1.0f - ALPHA);
+    // yaw = smoothed_yaw; // これ以降 getYaw() が返す値を平滑化されたものにする
+    // // Serial.println("fmod done"); // ← 追加
+
+    // yaw = normalizeDeg(yaw);
+    // // Serial.println("normalizeDeg done");
+
+    // delay(1);
+    imu::Vector<3> euler = _bno->getVector(Adafruit_BNO055::VECTOR_EULER);
+
+    float new_yaw = euler.x();
     bool now_button = digitalRead(RESET_PIN);
     static bool prevButton = LOW;
 
     if(prevButton == LOW && now_button == HIGH)
     {
         Serial.println(" Reset ");
-        now_val = yaw; // 現在の角度(Yaw)を保存
+        now_val = new_yaw;
     }
-    Serial.print(" ");
     prevButton = now_button;
 
-    /* リセット時の角度を基準としたbnoの角度=(bno本体の角度-リセット時の角度+360)を360で割った余り */
-    yaw = fmod((yaw - now_val + 360.0),360.0);
+    new_yaw = fmod((new_yaw - now_val + 360.0), 360.0);
+    new_yaw = normalizeDeg(new_yaw);
 
-    // int robot_angle = yaw * 1023 / 360; // 角度：0 ~ 360 -> 0 ~ 1023 -> 0v ~ 3.3v
+    // 異常なジャンプを検出して無視する
+    static float last_valid_yaw = 0.0f;
+    static bool first_run = true;
+    float diff = fabs(new_yaw - last_valid_yaw);
+    if (diff > 180.0f) diff = 360.0f - diff; // 円環の最短距離に補正
 
-
-    // float pitch = euler.y();
-    // float roll  = euler.z();
-
-    Serial.print(" reset val : ");
-    Serial.print(now_val);
-
-    Serial.print(" Yaw : ");
-    Serial.print(normalizeDeg(yaw));
-
-    yaw = normalizeDeg(yaw);
-
-    // Serial.print(" Pitch : ");
-    // Serial.print((pitch));
-
-    // Serial.print(" Roll : ");
-    // Serial.print((roll));
-
-    // Serial.print(" manman ");
-    // Serial.println(robot_angle);
-
-//  analogWrite(DAC_PIN, robot_angle); // DAC_pinに値を送る。
-
-    delay(1);
+    if (first_run || diff < 150.0f) // 1回のupdateで30度以上の急変は無視
+    {
+        yaw = new_yaw;
+        last_valid_yaw = new_yaw;
+        first_run = false;
+    }
+    // 異常値なら yaw を更新しない(前回の値を維持)
 }

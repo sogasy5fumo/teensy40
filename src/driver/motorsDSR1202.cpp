@@ -34,9 +34,9 @@ void DSR1202::move(int value_1ch, int value_2ch, int value_3ch, int value_4ch)
     // 2chについて
     value_2ch = constrain(value_2ch, -100, 100);
     String str_abs_value_2ch = String(abs(value_2ch));
-    if (abs(value_2ch) < 20)
+    if (abs(value_2ch) < 10)
         str_abs_value_2ch = "00" + str_abs_value_2ch;
-    else if (abs(value_2ch) < 200)
+    else if (abs(value_2ch) < 100)
         str_abs_value_2ch = "0" + str_abs_value_2ch;
 
     String data_value_2ch;
@@ -68,7 +68,7 @@ void DSR1202::move(int value_1ch, int value_2ch, int value_3ch, int value_4ch)
         str_abs_value_4ch = "0" + str_abs_value_4ch;
 
     String data_value_4ch;
-    if (value_3ch >= 0)
+    if (value_4ch >= 0)
         data_value_4ch = "4F" + str_abs_value_4ch;
     else
         data_value_4ch = "4R" + str_abs_value_4ch;
